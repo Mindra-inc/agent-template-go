@@ -1,0 +1,141 @@
+# Agent Configuration
+# This file is read by the Agent Registry to register the agent
+
+id: agent-go-template
+name: Go Template Agent
+description: Template for building Go-based agents for Mindra Platform
+vertical: custom
+type: http
+
+# Agent endpoint (local development)
+endpoint: http://localhost:8003
+
+# Docker deployment endpoint
+# endpoint: http://agent-go-template:8003
+
+capabilities:
+  - High-performance processing
+  - Low-latency operations
+  - System integration
+  - Data transformation
+
+# Pricing information
+pricing:
+  estimatedCost: 0.25
+  currency: USD
+
+# Execution settings
+timeout: 30000  # 30 seconds
+retries: 3
+
+# Metadata
+version: 1.0.0
+author: Mindra Platform
+tags:
+  - go
+  - template
+  - performance
+  - custom
+
+# Environment variables required
+requiredEnv:
+  - ANTHROPIC_API_KEY
+
+# Health check configuration
+healthCheck:
+  enabled: true
+  endpoint: /health
+  interval: 30
+  timeout: 3
+
+# Input schema (JSON Schema Draft 7)
+# Defines the expected structure of inputs to your agent
+inputSchema:
+  type: object
+  properties:
+    prompt:
+      type: string
+      description: The main instruction or query for the agent
+      minLength: 1
+      maxLength: 10000
+    context:
+      type: object
+      description: Additional context and parameters
+      properties:
+        temperature:
+          type: number
+          description: Temperature for LLM generation (0.0 - 1.0)
+          minimum: 0
+          maximum: 1
+          default: 0.7
+        max_tokens:
+          type: number
+          description: Maximum tokens to generate
+          minimum: 1
+          maximum: 4096
+          default: 1024
+        format:
+          type: string
+          description: Output format preference
+          enum: [text, json, markdown]
+          default: text
+      additionalProperties: true
+  required:
+    - prompt
+  additionalProperties: false
+
+# Output schema (JSON Schema Draft 7)
+# Defines the expected structure of outputs from your agent
+outputSchema:
+  type: object
+  properties:
+    result:
+      type: object
+      description: The main result from the agent
+      properties:
+        text:
+          type: string
+          description: Generated text response
+        data:
+          type: object
+          description: Structured data result
+          additionalProperties: true
+        insights:
+          type: array
+          description: List of insights or findings
+          items:
+            type: string
+      additionalProperties: true
+    metadata:
+      type: object
+      description: Execution metadata
+      properties:
+        cost:
+          type: number
+          description: Execution cost in USD
+          minimum: 0
+        duration:
+          type: number
+          description: Execution duration in milliseconds
+          minimum: 0
+        model:
+          type: string
+          description: Model or algorithm used
+        tokensUsed:
+          type: object
+          description: Token usage statistics
+          properties:
+            input:
+              type: number
+              description: Input tokens consumed
+            output:
+              type: number
+              description: Output tokens generated
+      required:
+        - cost
+        - duration
+        - model
+  required:
+    - result
+    - metadata
+  additionalProperties: false
